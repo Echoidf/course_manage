@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lgy.course.dao.CourseDao">
+
+    <select id="queryCoursesInfo" resultType="com.lgy.course.vo.CourseVO">
+        select course.*, user.username as tname
+        from course
+                 inner join teacher on teacher.id = course.teacher_id
+                 inner join user on user.id = teacher.user_id
+    </select>
+    <select id="getCourseScoreDistrubtion" resultType="com.lgy.course.vo.GradeDistribution">
+        SELECT
+        SUM(CASE WHEN total_grade >= 90 THEN 1 ELSE 0 END) AS excellent,
+        SUM(CASE WHEN total_grade >= 80 AND total_grade &lt; 90 THEN 1 ELSE 0 END) AS good,
+        SUM(CASE WHEN total_grade >= 70 AND total_grade &lt; 80 THEN 1 ELSE 0 END) AS medium,
+        SUM(CASE WHEN total_grade >= 60 AND total_grade &lt; 70 THEN 1 ELSE 0 END) AS pass,
+        SUM(CASE WHEN total_grade &lt; 60 THEN 1 ELSE 0 END) AS fail
+        FROM
+        (
+        SELECT
+        (sign_score + work_score + exp_score) + exam_grade * 0.7 AS total_grade
+        FROM course_selection
+        WHERE course_id = #{id}
+        ) t;
+    </select>
+</mapper>

@@ -1,0 +1,16 @@
+server:
+  port: 9000
+
+spring:
+  datasource:
+    password: 285637zq
+    username: root
+    url: jdbc:mysql://localhost:3306/course_manage
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/*.xml
+  typeAliasesPackage: com.lgy.course.
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lgy.course.dao.CourseSelectionDao">
+    <delete id="deleteByUidAndCourseId">
+        delete from course_selection where student_id =
+        (select id from student where user_id = #{userId}) and course_id = #{courseId}
+    </delete>
+
+    <select id="queryByStuId" resultType="com.lgy.course.vo.CourseSelectionVO">
+        select cs.sign_score as sign_score,
+               cs.work_score as work_score,
+               cs.exp_score as exp_score,
+               cs.exam_grade as exam_grade,
+               cs.course_id as course_id,
+               course.college as college,
+               course.name as name,
+               course.grade as grade,
+               course.cno as cno,
+               teacher.tno as tno,
+               `user`.username as tname
+        from course_selection cs
+                 inner join course on course.id = cs.course_id
+                 inner join teacher on teacher.id = course.teacher_id
+                 inner join `user` on teacher.user_id = `user`.id
+        where student_id = #{id}
+    </select>
+</mapper>
