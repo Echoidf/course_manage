@@ -2,12 +2,14 @@ package com.lgy.course.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.lgy.course.dao.CourseSelectionDao;
 import com.lgy.course.dao.StudentDao;
 import com.lgy.course.entity.CourseSelection;
 import com.lgy.course.entity.Student;
 import com.lgy.course.service.CourseSelectionService;
 import com.lgy.course.util.JwtUtil;
 import com.lgy.course.vo.CourseSelectionVO;
+import com.lgy.course.vo.CourseSnoVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -29,16 +32,19 @@ public class CourseSelectionController {
     @Resource
     private StudentDao studentDao;
 
+    @Resource
+    private CourseSelectionDao courseSelectionDao;
+
     // 查询学生选课信息，id为学生的id
     @GetMapping("/list/{id}")
     public ResponseEntity queryStudentSelections(@PathVariable int id, HttpServletRequest request) {
-        if(id == 0){
+        if (id == 0) {
             long userId = 0;
             try {
                 String token = request.getHeader("Authorization").split(" ")[1];
                 JwtUtil jwtUtil = new JwtUtil();
                 userId = (long) jwtUtil.decode(token).get("userId");
-            }catch (Exception e) {
+            } catch (Exception e) {
                 logger.error(e.getMessage());
                 return ResponseEntity.badRequest().build();
             }
@@ -48,7 +54,7 @@ public class CourseSelectionController {
             wrapper.eq("user_id", userId);
             Student student = studentDao.selectOne(wrapper);
 
-            if(null == student){
+            if (null == student) {
                 return ResponseEntity.ok().build();
             }
             id = student.getId();
@@ -60,19 +66,19 @@ public class CourseSelectionController {
 
     //选课/退选
     @PostMapping("/selectOrCancelCourse/{id}")
-    public ResponseEntity add(@PathVariable int id, HttpServletRequest request){
+    public ResponseEntity add(@PathVariable int id, HttpServletRequest request) {
 
         long userId = 0;
         try {
             String token = request.getHeader("Authorization").split(" ")[1];
             JwtUtil jwtUtil = new JwtUtil();
             userId = (long) jwtUtil.decode(token).get("userId");
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error(e.getMessage());
             return ResponseEntity.badRequest().build();
         }
 
-        if(request.getParameter("action").equals("cancel")){
+        if (request.getParameter("action").equals("cancel")) {
             int affected = courseSelectionService.deleteByUidAndCourseId(userId, id);
             return ResponseEntity.ok("affected: " + affected);
         }
@@ -82,7 +88,7 @@ public class CourseSelectionController {
         wrapper.eq("user_id", userId);
         Student student = studentDao.selectOne(wrapper);
 
-        if(null == student){
+        if (null == student) {
             return ResponseEntity.badRequest().build();
         }
 
@@ -110,7 +116,21 @@ public class CourseSelectionController {
         UpdateWrapper<CourseSelection> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("id", selection.getId());
         boolean saved = courseSelectionService.update(courseSelection, updateWrapper);
-        return ResponseEntity.ok("success:"+ saved);
+        return ResponseEntity.ok("success:" + saved);
+    }
+
+    // 分别输出成绩在优、良、中、及格、不及格各区间的学生学号
+    @GetMapping("/sno/{cId}")
+    public ResponseEntity querySnoInDif(@PathVariable int cId) {
+        List<CourseSnoVO> courseSnoVOList = courseSelectionDao.querySnoInDif(cId);
+        for (CourseSnoVO courseSnoVO : courseSnoVOList) {
+            try {
+                String[] split = courseSnoVO.getSnos().split(",");
+                int[] array = Arrays.asList(split).stream().mapToInt(Integer::parseInt).toArray();
+                courseSnoVO.setSnoList(array);
+            }catch (Exception e){}
+        }
+        return ResponseEntity.ok(courseSnoVOList);
     }
 
 }

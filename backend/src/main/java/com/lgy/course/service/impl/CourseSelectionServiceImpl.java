@@ -13,7 +13,6 @@ import java.util.List;
 /**
  * (CourseSelection)表服务实现类
  *
- 
  * @since 2023-11-01 11:45:40
  */
 @Service("courseSelectionService")
@@ -25,13 +24,12 @@ public class CourseSelectionServiceImpl extends ServiceImpl<CourseSelectionDao, 
     @Override
     public List<CourseSelectionVO> queryByStuId(int id) {
         List<CourseSelectionVO> selectionVOS = courseSelectionDao.queryByStuId(id);
-        try {
-            for (CourseSelectionVO selectionVO : selectionVOS) {
+        for (CourseSelectionVO selectionVO : selectionVOS) {
+            try {
                 selectionVO.setUsualGrade(selectionVO.getSignScore() + selectionVO.getWorkScore() + selectionVO.getExpScore());
                 selectionVO.setTotalGrade(selectionVO.getUsualGrade() + selectionVO.getExamGrade() * 0.7);
+            } catch (NullPointerException e) {
             }
-        }catch (NullPointerException e){
-            return selectionVOS;
         }
         return selectionVOS;
     }

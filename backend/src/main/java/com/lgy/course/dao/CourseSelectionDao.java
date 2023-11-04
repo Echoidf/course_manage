@@ -3,6 +3,7 @@ package com.lgy.course.dao;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.lgy.course.entity.CourseSelection;
 import com.lgy.course.vo.CourseSelectionVO;
+import com.lgy.course.vo.CourseSnoVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -19,5 +20,7 @@ public interface CourseSelectionDao extends BaseMapper<CourseSelection> {
     List<CourseSelectionVO> queryByStuId(@Param("id") int id);
 
     int deleteByUidAndCourseId(@Param("userId")long userId, @Param("courseId")int courseId);
+
+    List<CourseSnoVO> querySnoInDif(@Param("cId") int cId);
 }
 

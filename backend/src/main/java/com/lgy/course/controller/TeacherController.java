@@ -91,7 +91,7 @@ public class TeacherController  {
 
     // 获取教师的学生信息
     @GetMapping("/students")
-    public ResponseEntity getTeacherStus(@RequestParam int uId,
+    public ResponseEntity getTeacherStus(@RequestParam long uId,
                                          @RequestParam String cname) {
         QueryWrapper<Teacher> teacherQueryWrapper = new QueryWrapper<>();
         teacherQueryWrapper.eq("user_id",uId);
@@ -101,10 +101,15 @@ public class TeacherController  {
 
     // 查询教师授课的课程列表
     @GetMapping("/course/{uId}")
-    public ResponseEntity getTeacherCourseList(@PathVariable int uId) {
+    public ResponseEntity getTeacherCourseList(@PathVariable long uId) {
         QueryWrapper<Teacher> teacherQueryWrapper = new QueryWrapper<>();
         teacherQueryWrapper.eq("user_id", uId);
         Teacher teacher = teacherService.getBaseMapper().selectOne(teacherQueryWrapper);
+
+        if(null == teacher){
+            return ResponseEntity.ok().build();
+        }
+
         QueryWrapper<Course> wrapper = new QueryWrapper<>();
         wrapper.eq("teacher_id", teacher.getId());
         List<Course> courses = courseDao.selectList(wrapper);

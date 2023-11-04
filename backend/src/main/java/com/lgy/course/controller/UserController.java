@@ -49,7 +49,7 @@ public class UserController {
 
         Map<String, Object> map = new HashMap<>();
         map.put("username", user.getUsername());
-        map.put("userId", user.getId());
+        map.put("userId", user.getId().toString());
         map.put("avatar", user.getAvatar());
         map.put("role", user.getRole());
         return ResponseEntity.ok(map);

@@ -1,14 +1,22 @@
 <template>
   <div>
     <div ref="chartElRef" class="chart"></div>
+
+    <!-- 展示各个级别学生的学号 -->
+    <div>
+      <el-table :data="tableData">
+        <el-table-column prop="grade" label="成绩" />
+        <el-table-column prop="snos" label="学号" />
+      </el-table>
+    </div>
   </div>
 </template>
 
 <script setup>
 import * as echarts from "echarts";
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, reactive } from 'vue';
 
-import { getCourseScore } from "@/api/common";
+import { getCourseScore,getCourseSnos } from "@/api/common";
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
@@ -18,6 +26,7 @@ let courseName = route.params.courseName;
 
 const chartElRef = ref();
 const chartRef = ref();
+const tableData = reactive([])
 
 async function getData() {
   const res = await getCourseScore(courseId);
@@ -59,6 +68,11 @@ async function getData() {
         },
       ],
     })
+  }
+
+  const res2 = await getCourseSnos(courseId);
+  if(res2 && res2.status === 200){
+    tableData.push(...res2.data)
   }
 }
 

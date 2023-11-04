@@ -109,3 +109,7 @@ export function reUpdateStuScore(sno, data){
 export function getCourseScore(cId) {
     return request.get(`/course/score/${cId}`)
 }
+
+export function getCourseSnos(cId) {
+    return request.get(`/courseSelection/sno/${cId}`)
+}

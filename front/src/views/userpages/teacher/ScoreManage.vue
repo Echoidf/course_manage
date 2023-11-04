@@ -46,13 +46,13 @@
       <el-dialog v-model="updateStuScoreShow" width="300px">
         <el-form>
           <el-form-item label="签到成绩:">
-            <el-input v-model="updateStuScoreParams.signScore" label-width="80px"></el-input>
+            <el-input v-model="updateStuScoreParams.signScore" label-width="80px" placeholder="满分10"></el-input>
           </el-form-item>
           <el-form-item label="作业成绩:">
-            <el-input v-model="updateStuScoreParams.workScore" label-width="80px"></el-input>
+            <el-input v-model="updateStuScoreParams.workScore" label-width="80px" placeholder="满分10"></el-input>
           </el-form-item>
           <el-form-item label="实验成绩:">
-            <el-input v-model="updateStuScoreParams.expScore" label-width="80px"></el-input>
+            <el-input v-model="updateStuScoreParams.expScore" label-width="80px" placeholder="满分10"></el-input>
           </el-form-item>
           <el-form-item label="考试成绩:">
             <el-input v-model="updateStuScoreParams.examGrade" label-width="80px" placeholder="满分100"></el-input>

@@ -25,4 +25,19 @@
                  inner join `user` on teacher.user_id = `user`.id
         where student_id = #{id}
     </select>
+    <select id="querySnoInDif" resultType="com.lgy.course.vo.CourseSnoVO">
+        SELECT
+            CASE
+                WHEN ROUND(c.sign_score + c.work_score + c.exp_score + c.exam_grade * 0.7, 1) >= 90 THEN '优'
+                WHEN ROUND(c.sign_score + c.work_score + c.exp_score + c.exam_grade * 0.7, 1) >= 80 THEN '良'
+                WHEN ROUND(c.sign_score + c.work_score + c.exp_score + c.exam_grade * 0.7, 1) >= 70 THEN '中'
+                WHEN ROUND(c.sign_score + c.work_score + c.exp_score + c.exam_grade * 0.7, 1) >= 60 THEN '及格'
+                ELSE '不及格'
+                END AS grade,
+            GROUP_CONCAT(s.sno) AS snos
+        FROM course_selection c
+                 JOIN student s ON c.student_id = s.id
+        WHERE c.course_id = #{cId}
+        GROUP BY grade;
+    </select>
 </mapper>
